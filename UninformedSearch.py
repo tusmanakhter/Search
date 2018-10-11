@@ -5,13 +5,13 @@ class UninformedSearch:
         self.open_list = []
         self.closed_list = []
 
-    def search(self, type):
+    def search(self, search_type):
         self.open_list.append(self.initial)
         goal_found = False
         while len(self.open_list) > 0 and not goal_found:
-            if type == "depth_first":
+            if search_type == "depth_first":
                 current_node = self.open_list.pop()
-            elif type == "breadth_first":
+            elif search_type == "breadth_first":
                 current_node = self.open_list.pop(0)
             else:
                 print("Invalid search type")
@@ -29,6 +29,31 @@ class UninformedSearch:
                     self.trace_path(child)
                 if not self.node_in_list(child):
                     self.open_list.append(child)
+
+    def iterative_depth_first_search(self, max_depth):
+        self.open_list = []
+        self.closed_list = []
+        self.open_list.append(self.initial)
+        goal_found = False
+        while len(self.open_list) > 0 and not goal_found:
+            current_node = self.open_list.pop()
+            self.closed_list.append(current_node)
+
+            current_node.print_state()  # For debugging
+            print(current_node.depth)  # For debugging
+
+            if current_node.depth >= max_depth:
+                continue
+            current_node.expand_moves()
+            for child in current_node.children:
+                if child.is_goal_state():
+                    print("Found goal.")
+                    goal_found = True
+                    self.trace_path(child)
+                if not self.node_in_list(child):
+                    self.open_list.append(child)
+        if not goal_found:
+            self.iterative_depth_first_search(max_depth*2)
 
     def node_in_list(self, new_node):
         contains = False
