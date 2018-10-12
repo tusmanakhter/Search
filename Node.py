@@ -8,14 +8,15 @@ import math
 
 
 class Node:
-    def __init__(self, state, parent, move, depth):
+    def __init__(self, state, columns, parent, move, depth, heuristic_type=None):
         self.state = state
         self.parent = parent
         self.move = move
         self.depth = depth
-        self.columns = 4
-        self.heuristic = self.heuristic_row_column()
-        self.f_value = self.heuristic + self.depth
+        self.columns = columns
+        self.heuristic_type = heuristic_type
+        self.heuristic = self.heuristic(heuristic_type)
+        self.f_value = self.f_value()
 
         # to get step
         self.letters = dict(enumerate(string.ascii_lowercase))
@@ -98,17 +99,29 @@ class Node:
     def add_child_move(self, zero_index, switch_position):
         new_state = self.state.copy()
         new_state[zero_index], new_state[switch_position] = new_state[switch_position], new_state[zero_index]
-        child = Node(new_state, self, self.letters[switch_position], self.depth + 1)
+        child = Node(new_state, self.columns, self, self.letters[switch_position], self.depth + 1, self.heuristic_type)
         self.children.append(child)
 
-    def print_state(self):
-        print(self.move + " [" + ', '.join(str(x) for x in self.state) + "]")
+    def state_to_string(self):
+        return self.move + " [" + ', '.join(str(x) for x in self.state) + "]"
 
     def is_same_state(self, other_state):
         is_same = False
         if self.state == other_state:
             is_same = True
         return is_same
+
+    def f_value(self):
+        if self.heuristic is not None:
+            return self.heuristic + self.depth
+
+    def heuristic(self, heuristic_type):
+        if heuristic_type == "linear_distance":
+            return self.heuristic_linear_distance()
+        elif heuristic_type == "wrong_row_column":
+            return self.heuristic_wrong_row_column()
+        else:
+            return None
 
     def heuristic_linear_distance(self):
         total = 0
@@ -125,7 +138,7 @@ class Node:
             total += math.sqrt(math.sqrt((goal_row - row) ** 2 + (goal_column - column) ** 2))
         return total
 
-    def heuristic_row_column(self):
+    def heuristic_wrong_row_column(self):
         total = 0
         for index, element in enumerate(self.state):
             row = math.floor(index / self.columns)
