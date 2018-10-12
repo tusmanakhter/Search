@@ -1,4 +1,10 @@
+# Parts of this implementation inspired by the following:
+# https://www.youtube.com/watch?v=6edibwHBDFk
+# https://gist.github.com/flatline/838202/ca0d35b0ce7e5d9ec86b77b0490baba4cda87980
+
+
 import string
+import math
 
 
 class Node:
@@ -8,6 +14,7 @@ class Node:
         self.move = move
         self.depth = depth
         self.columns = 4
+        self.heuristic = self.heuristic_linear_distance()
 
         # to get step
         self.letters = dict(enumerate(string.ascii_lowercase))
@@ -24,18 +31,28 @@ class Node:
                 return False
         return goal_state
 
-    def expand_moves(self):
+    def expand_moves(self, search_type=None):
         for index, value in enumerate(self.state):
             if value == 0:
                 empty = index
-                self.move_up(empty)
-                self.move_up_right(empty)
-                self.move_right(empty)
-                self.move_down_right(empty)
-                self.move_down(empty)
-                self.move_down_left(empty)
-                self.move_left(empty)
-                self.move_up_left(empty)
+                if search_type == "depth_first":
+                    self.move_up_left(empty)
+                    self.move_left(empty)
+                    self.move_down_left(empty)
+                    self.move_down(empty)
+                    self.move_down_right(empty)
+                    self.move_right(empty)
+                    self.move_up_right(empty)
+                    self.move_up(empty)
+                else:
+                    self.move_up(empty)
+                    self.move_up_right(empty)
+                    self.move_right(empty)
+                    self.move_down_right(empty)
+                    self.move_down(empty)
+                    self.move_down_left(empty)
+                    self.move_left(empty)
+                    self.move_up_left(empty)
 
     def move_up(self, i):
         if i - self.columns > 0:
@@ -91,3 +108,18 @@ class Node:
         if self.state == other_state:
             is_same = True
         return is_same
+
+    def heuristic_linear_distance(self):
+        total = 0
+        for index, element in enumerate(self.state):
+            row = math.floor(index / self.columns)
+            column = index % self.columns
+            goal_row = math.floor((element - 1) / self.columns)
+            goal_column = (element - 1) % self.columns
+
+            # For 0 to go last
+            if element == 0:
+                goal_row = 2
+
+            total += math.sqrt(math.sqrt((goal_row - row) ** 2 + (goal_column - column) ** 2))
+        return total

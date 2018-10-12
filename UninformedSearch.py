@@ -1,3 +1,7 @@
+# Parts of this implementation inspired by the following:
+# https://www.youtube.com/watch?v=6edibwHBDFk
+
+
 class UninformedSearch:
     def __init__(self, initial):
         self.initial = initial
@@ -21,7 +25,11 @@ class UninformedSearch:
             current_node.print_state()  # For debugging
             print(current_node.depth)  # For debugging
 
-            current_node.expand_moves()
+            if search_type == "depth_first":
+                current_node.expand_moves("depth_first")
+            elif search_type == "breadth_first":
+                current_node.expand_moves()
+
             for child in current_node.children:
                 if child.is_goal_state():
                     print("Found goal.")
@@ -44,7 +52,7 @@ class UninformedSearch:
 
             if current_node.depth >= max_depth:
                 continue
-            current_node.expand_moves()
+            current_node.expand_moves("depth_first")
             for child in current_node.children:
                 if child.is_goal_state():
                     print("Found goal.")
