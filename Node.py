@@ -14,7 +14,7 @@ class Node:
         self.move = move
         self.depth = depth
         self.columns = 4
-        self.heuristic = self.heuristic_linear_distance()
+        self.heuristic = self.heuristic_row_column()
         self.f_value = self.heuristic + self.depth
 
         # to get step
@@ -123,4 +123,22 @@ class Node:
                 goal_row = 2
 
             total += math.sqrt(math.sqrt((goal_row - row) ** 2 + (goal_column - column) ** 2))
+        return total
+
+    def heuristic_row_column(self):
+        total = 0
+        for index, element in enumerate(self.state):
+            row = math.floor(index / self.columns)
+            column = index % self.columns
+            goal_row = math.floor((element - 1) / self.columns)
+            goal_column = (element - 1) % self.columns
+
+            # For 0 to go last
+            if element == 0:
+                goal_row = 2
+
+            if (goal_row - row) != 0:
+                total += 1
+            if (goal_column - column) != 0:
+                total += 1
         return total
