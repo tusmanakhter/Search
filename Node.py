@@ -15,6 +15,7 @@ class Node:
         self.depth = depth
         self.columns = 4
         self.heuristic = self.heuristic_linear_distance()
+        self.f_value = self.heuristic + self.depth
 
         # to get step
         self.letters = dict(enumerate(string.ascii_lowercase))

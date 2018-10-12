@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # depth_first_search.search("breadth_first")
     # depth_first_search.iterative_depth_first_search(5)
     best_first_search = InformedSearch(initial)
-    best_first_search.search()
+    best_first_search.search("best_first")
 
     print("Printing states\n")
     # for node in reversed(depth_first_search.path):

@@ -8,11 +8,17 @@ class InformedSearch:
         self.open_list = []
         self.closed_list = []
 
-    def search(self):
+    def search(self, search_type):
         self.open_list.append(self.initial)
         goal_found = False
         while len(self.open_list) > 0 and not goal_found:
-            current_node = min(self.open_list, key=attrgetter('heuristic'))
+            if search_type == "best_first":
+                current_node = min(self.open_list, key=attrgetter('heuristic'))
+            elif search_type == "a":
+                current_node = min(self.open_list, key=attrgetter('f_value'))
+            else:
+                print("Invalid search type")
+                return
             self.open_list.remove(current_node)
             self.closed_list.append(current_node)
 
