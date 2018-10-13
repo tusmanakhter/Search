@@ -14,27 +14,33 @@ def print_results(title, search, file):
         file.write(search.trace_to_string())
 
 
-# Usage: python3 solve_puzzle.py [-c columns] [-m max_depth] puzzle
+# Usage: python3 solve_puzzle.py [-b] [-c columns] [-m max_depth] puzzle
 parser = argparse.ArgumentParser(description='Solves puzzles based on the 8 puzzle.')
 
+parser.add_argument('-b', help="Option to include breadth-first search", action='store_true')
 parser.add_argument("-c", "--columns", help="amount of columns in the puzzle", type=int, default=4)
 parser.add_argument("-m", "--max-depth", help="max depth to stop depth-first-search", type=int, default=100)
 parser.add_argument("puzzle", help="Puzzle to solve ex. \"1 0 3 7 5 2 6 4 9 10 11 8\"")
 
 args = parser.parse_args()
-initial_puzzle = list(map(int, args.puzzle.split()))
+try:
+    initial_puzzle = list(map(int, args.puzzle.split()))
+except ValueError:
+    print("Please input a string of numbers")
+    exit()
 
 if len(initial_puzzle) % args.columns != 0:
     print("Incompatible puzzle and column value(" + str(args.columns) + ").")
-    exit(1)
+    exit()
 
 if len(set(initial_puzzle)) != len(initial_puzzle):
     print("Please do not have any duplicate values in puzzle.")
-    exit(1)
+    exit()
 
-initial_node = Node(initial_puzzle, args.columns, None, "0", 0)
-breadth_first = Search(initial_node)
-breadth_first.search("breadth_first")
+if args.b:
+    initial_node = Node(initial_puzzle, args.columns, None, "0", 0)
+    breadth_first = Search(initial_node)
+    breadth_first.search("breadth_first")
 
 initial_node = Node(initial_puzzle, args.columns, None, "0", 0)
 depth_first = Search(initial_node)
@@ -57,7 +63,8 @@ a_wrong = Search(initial_node)
 a_wrong.search("a")
 
 print("\n----- Solutions -----\n")
-print_results("Breadth First Search", breadth_first, "puzzleBreadth.txt")
+if args.b:
+    print_results("Breadth First Search", breadth_first, "puzzleBreadth.txt")
 print_results("Depth First Search", depth_first, "puzzleDFS.txt")
 print_results("Best First Search (Linear Distance)", best_first_linear, "puzzleBFS-h1.txt")
 print_results("Best First Search (Wrong Row Column)", best_first_wrong, "puzzleBFS-h2.txt")
