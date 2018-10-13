@@ -5,9 +5,10 @@ from Search import Search
 
 def print_results(title, search, file):
     print("\n" + title + ":\n")
-    print("Nodes expanded = " + str(0) +
+    print("Total = " + str(len(search.open_list)+len(search.closed_list)) +
           ", Open list = " + str(len(search.open_list)) +
-          ", Closed list = " + str(len(search.closed_list)) + "\n")
+          ", Closed list = " + str(len(search.closed_list)) +
+          ", Path length = " + str(len(search.path)) + "\n")
     print(search.trace_to_string())
     with open(file, "w") as file:
         file.write(search.trace_to_string())
