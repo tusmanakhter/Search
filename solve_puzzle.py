@@ -19,23 +19,25 @@ parser = argparse.ArgumentParser(description='Solves puzzles based on the 8 puzz
 
 parser.add_argument('-b', help="Option to include breadth-first search", action='store_true')
 parser.add_argument("-c", "--columns", help="amount of columns in the puzzle", type=int, default=4)
-parser.add_argument("-m", "--max-depth", help="max depth to stop depth-first-search", type=int, default=100)
+parser.add_argument("-m", "--max-depth", help="max depth to stop depth-first-search", type=int, default=None)
+parser.add_argument('-i', help="Option to iterate in depth-first search", action='store_true')
 parser.add_argument("puzzle", help="Puzzle to solve ex. \"1 0 3 7 5 2 6 4 9 10 11 8\"")
 
 args = parser.parse_args()
+
+if args.i and args.max_depth is None:
+    parser.error("--max-depth is required with -i")
+
 try:
     initial_puzzle = list(map(int, args.puzzle.split()))
 except ValueError:
-    print("Please input a string of numbers")
-    exit()
+    parser.error("Please input a string of numbers as puzzle")
 
 if len(initial_puzzle) % args.columns != 0:
-    print("Incompatible puzzle and column value(" + str(args.columns) + ").")
-    exit()
+    parser.error("Incompatible puzzle and columns value(" + str(args.columns) + ").")
 
 if len(set(initial_puzzle)) != len(initial_puzzle):
-    print("Please do not have any duplicate values in puzzle.")
-    exit()
+    parser.error("Please do not have any duplicate values in puzzle.")
 
 if args.b:
     initial_node = Node(initial_puzzle, args.columns, None, "0", 0)
@@ -44,7 +46,7 @@ if args.b:
 
 initial_node = Node(initial_puzzle, args.columns, None, "0", 0)
 depth_first = Search(initial_node)
-depth_first.search("depth_first", args.max_depth)
+depth_first.search("depth_first", args.max_depth, args.i)
 
 initial_node = Node(initial_puzzle, args.columns, None, "0", 0, "linear_distance")
 best_first_linear = Search(initial_node)

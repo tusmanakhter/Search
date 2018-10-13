@@ -10,7 +10,7 @@ class Search:
         self.open_list = []
         self.closed_list = []
 
-    def search(self, search_type, max_depth=None):
+    def search(self, search_type, max_depth=None, iterate=False):
         self.open_list.append(self.initial)
         goal_found = False
         while len(self.open_list) > 0 and not goal_found:
@@ -46,7 +46,7 @@ class Search:
             for child in current_node.children:
                 if not self.node_in_list(child):
                     self.open_list.append(child)
-        if search_type == "depth_first" and not goal_found and max_depth is not None:
+        if search_type == "depth_first" and not goal_found and max_depth is not None and iterate:
             self.open_list = []
             self.closed_list = []
             self.search("depth_first", max_depth * 2)
