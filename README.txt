@@ -34,3 +34,6 @@ specified. This can be done with the option "-c". The default is 4 and expects a
 Here is an example to specify a different column size:
 
 python3 solve_puzzle.py "1 0 3 7 5 2 6 4 9 10 11 8" -c 3
+
+NOTE: In this implementation, a move is moving the 0 or empty tile into another place.
+For example, UP means "move the blank tile UP".
